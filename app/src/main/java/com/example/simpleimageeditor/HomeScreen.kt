@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import com.example.simpleimageeditor.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
