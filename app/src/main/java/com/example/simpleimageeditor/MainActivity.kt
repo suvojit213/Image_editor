@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import java.io.OutputStream
+import android.content.Intent
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.input.pointer.pointerInput
@@ -177,8 +178,19 @@ fun ImageEditorScreen(snackbarHostState: SnackbarHostState, coroutineScope: Coro
                 coroutineScope.launch { snackbarHostState.showSnackbar("Saving image...") }
                 editedBitmap?.let { bitmap ->
                     try {
-                        saveImageToGallery(context, bitmap, "edited_image_${System.currentTimeMillis()}")
-                        coroutineScope.launch { snackbarHostState.showSnackbar("Image saved successfully!") }
+                        val savedUri = saveImageToGallery(context, bitmap, "edited_image_${System.currentTimeMillis()}")
+                        if (savedUri != null) {
+                            coroutineScope.launch { snackbarHostState.showSnackbar("Image saved successfully!") }
+                            // Share the image
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "image/jpeg"
+                                putExtra(Intent.EXTRA_STREAM, savedUri)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            context.startActivity(Intent.createChooser(shareIntent, "Share Image"))
+                        } else {
+                            coroutineScope.launch { snackbarHostState.showSnackbar("Failed to save image.") }
+                        }
                     } catch (e: Exception) {
                         coroutineScope.launch { snackbarHostState.showSnackbar("Failed to save image: ${e.localizedMessage}") }
                     }
@@ -206,7 +218,7 @@ fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     return bmpGrayscale
 }
 
-fun saveImageToGallery(context: android.content.Context, bitmap: Bitmap, title: String) {
+fun saveImageToGallery(context: android.content.Context, bitmap: Bitmap, title: String): Uri? {
     val contentValues = android.content.ContentValues().apply {
         put(MediaStore.Images.Media.DISPLAY_NAME, "$title.jpg")
         put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
@@ -215,18 +227,20 @@ fun saveImageToGallery(context: android.content.Context, bitmap: Bitmap, title: 
     }
 
     val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-    uri?.let { 
+    uri?.let {
         var outputStream: OutputStream? = null
         try {
             outputStream = context.contentResolver.openOutputStream(it)
             outputStream?.let { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
             outputStream?.flush()
+            return it // Return the URI on success
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
             outputStream?.close()
         }
     }
+    return null // Return null on failure
 }
 
 @Preview(showBackground = true)
