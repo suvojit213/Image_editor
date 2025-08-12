@@ -18,6 +18,21 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Download and Extract Gradle Wrapper JAR
+        # This step downloads the full Gradle distribution, extracts the gradle-wrapper.jar,
+        # and places it in the correct directory.
+        run: |
+          GRADLE_DIST_URL="https://services.gradle.org/distributions/gradle-9.0.0-bin.zip"
+          GRADLE_VERSION="9.0.0"
+          WRAPPER_DIR="gradle/wrapper"
+          WRAPPER_JAR_NAME="gradle-wrapper-${GRADLE_VERSION}.jar"
+          
+          mkdir -p "$WRAPPER_DIR"
+          curl -L "$GRADLE_DIST_URL" -o gradle-distribution.zip
+          unzip -j gradle-distribution.zip "gradle-${GRADLE_VERSION}/lib/${WRAPPER_JAR_NAME}" -d "$WRAPPER_DIR"
+          mv "$WRAPPER_DIR/${WRAPPER_JAR_NAME}" "$WRAPPER_DIR/gradle-wrapper.jar"
+          rm gradle-distribution.zip
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
