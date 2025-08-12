@@ -20,7 +20,7 @@ jobs:
 
       - name: Download and Extract Gradle Wrapper JAR
         run: |
-          GRADLE_DIST_URL="https://services.gradle.org/distributions/gradle-9.0.0-bin.zip"
+          GRADLE_DIST_URL="https://services.gradle.org/distributions/gradle-9.0.0-all.zip"
           GRADLE_VERSION="9.0.0"
           WRAPPER_DIR="gradle/wrapper"
           TEMP_UNZIP_DIR="gradle_dist_temp"
