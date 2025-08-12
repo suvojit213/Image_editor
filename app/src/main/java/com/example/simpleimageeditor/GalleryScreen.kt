@@ -64,7 +64,20 @@ fun GalleryScreen(navController: NavController) {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
             )
         },
-        containerColor = DarkBackground // Set dark background for Scaffold
+        containerColor = DarkBackground, // Set dark background for Scaffold
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    // Trigger image picker and navigate to editor
+                    // For now, I will navigate to the editor without an initial image
+                    navController.navigate("image_editor")
+                },
+                containerColor = MaterialTheme.colorScheme.primary // Use primary color for FAB
+            ) {
+                Icon(Icons.Filled.Add, "Add new image")
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End // Position FAB at the end
     ) { paddingValues ->
         if (images.isEmpty()) {
             Box(
