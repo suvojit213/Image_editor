@@ -142,7 +142,7 @@ fun saveImageToGallery(context: android.content.Context, bitmap: Bitmap, title: 
         var outputStream: OutputStream? = null
         try {
             outputStream = context.contentResolver.openOutputStream(it)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+            outputStream?.let { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
             outputStream?.flush()
         } catch (e: Exception) {
             e.printStackTrace()
