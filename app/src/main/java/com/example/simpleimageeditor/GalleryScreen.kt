@@ -31,6 +31,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Collections
+import androidx.compose.material.icons.filled.Search
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,19 +69,33 @@ fun GalleryScreen(navController: NavController) {
             )
         },
         containerColor = DarkBackground, // Set dark background for Scaffold
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    // Trigger image picker and navigate to editor
-                    // For now, I will navigate to the editor without an initial image
-                    navController.navigate("image_editor")
-                },
-                containerColor = MaterialTheme.colorScheme.primary // Use primary color for FAB
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp) // Padding for floating effect
+                    .clip(RoundedCornerShape(16.dp)), // Rounded corners
+                containerColor = MaterialTheme.colorScheme.surface // Use surface color for the bar
             ) {
-                Icon(Icons.Filled.Add, "Add new image")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Filled.PhotoLibrary, "Photos", tint = MaterialTheme.colorScheme.onSurface)
+                        Text("Photos", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelSmall)
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Filled.Collections, "Collections", tint = MaterialTheme.colorScheme.onSurface)
+                        Text("Collections", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelSmall)
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Filled.Search, "Search", tint = MaterialTheme.colorScheme.onSurface)
+                        Text("Search", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelSmall)
+                    }
+                }
             }
-        },
-        floatingActionButtonPosition = FabPosition.End // Position FAB at the end
+        }
     ) { paddingValues ->
         if (images.isEmpty()) {
             Box(
