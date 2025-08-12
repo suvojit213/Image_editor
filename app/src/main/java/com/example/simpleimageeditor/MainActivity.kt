@@ -65,11 +65,24 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     snackbarHost = { SnackbarHost(snackbarHostState) }
                 ) { paddingValues -> // Keep paddingValues for Scaffold content
-                    NavHost(navController = navController, startDestination = "home") {
-                        composable("home") {
-                            HomeScreen(navController = navController)
+                    NavHost(navController = navController, startDestination = "gallery") {
+                        composable("gallery") {
+                            GalleryScreen(navController = navController)
                         }
-                        composable("image_editor") {
+                        composable("image_detail/{imageUri}") { backStackEntry ->
+                            ImageDetailScreen(
+                                navController = navController,
+                                imageUri = backStackEntry.arguments?.getString("imageUri")
+                            )
+                        }
+                        composable("image_editor/{imageUri}") { backStackEntry ->
+                            ImageEditorScreen(
+                                snackbarHostState = snackbarHostState,
+                                coroutineScope = scope,
+                                initialImageUri = backStackEntry.arguments?.getString("imageUri")
+                            )
+                        }
+                        composable("image_editor") { // For picking image from editor directly
                             ImageEditorScreen(snackbarHostState = snackbarHostState, coroutineScope = scope)
                         }
                     }
@@ -80,10 +93,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ImageEditorScreen(snackbarHostState: SnackbarHostState, coroutineScope: CoroutineScope) {
+fun ImageEditorScreen(
+    snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope,
+    initialImageUri: String? = null
+) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var editedBitmap by remember { mutableStateOf<Bitmap?>(null) }
     val context = LocalContext.current
+
+    LaunchedEffect(initialImageUri) {
+        initialImageUri?.let {
+            selectedImageUri = Uri.parse(it)
+        }
+    }
 
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
