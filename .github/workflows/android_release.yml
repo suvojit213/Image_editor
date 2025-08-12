@@ -40,7 +40,7 @@ jobs:
       run: ./gradlew clean
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --info
+      run: ./gradlew assembleDebug
 
     - name: Find APK files
       run: find app/build -name "*.apk"
