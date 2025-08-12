@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.simpleimageeditor.ui.theme.SimpleImageEditorTheme
-import coil.compose.AsyncImage
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
