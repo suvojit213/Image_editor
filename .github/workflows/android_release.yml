@@ -34,25 +34,15 @@ jobs:
         fi
         chmod +x gradlew
 
-    - name: Decode Keystore (if signing secrets available)
-      if: secrets.SIGNING_KEYSTORE_BASE64 != '' # Only run if secret is present
-      run: echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > app/my-release-key.jks
+    
 
     - name: Clean project
       run: ./gradlew clean
 
-    - name: Build Release APK (if signing secrets available)
-      if: secrets.SIGNING_KEYSTORE_BASE64 != '' # Only run if secret is present
+    - name: Build Release APK
       run: ./gradlew assembleRelease
-      env:
-        KEYSTORE_PATH: my-release-key.jks
-        KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
-        KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-        KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
-    - name: Build Debug APK (fallback if no signing secrets)
-      if: secrets.SIGNING_KEYSTORE_BASE64 == '' # Only run if secret is NOT present
-      run: ./gradlew assembleDebug
+    
 
     - name: Extract version name
       # Extracts the versionName from app/build.gradle.kts to use in the release tag.
