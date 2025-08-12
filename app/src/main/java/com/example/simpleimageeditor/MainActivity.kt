@@ -33,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import java.io.OutputStream
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Arrangement
 
 
 
@@ -68,13 +70,45 @@ fun ImageEditorScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally, // Center content horizontally
+        verticalArrangement = Arrangement.SpaceBetween // Distribute space vertically
     ) {
-        Button(onClick = { pickImageLauncher.launch("image/*") }) {
+        // Top section: Pick Image button
+        Button(
+            onClick = { pickImageLauncher.launch("image/*") },
+            modifier = Modifier.padding(bottom = 16.dp) // Add padding below the button
+        ) {
             Text("Pick Image")
         }
 
-        Row(modifier = Modifier.padding(vertical = 8.dp)) {
+        // Middle section: Image display
+        val imageToDisplay = editedBitmap ?: selectedImageUri
+
+        if (imageToDisplay != null) {
+            AsyncImage(
+                model = imageToDisplay,
+                contentDescription = "Selected Image",
+                modifier = Modifier
+                    .weight(1f) // Take available vertical space
+                    .fillMaxWidth() // Fill width
+                    .padding(bottom = 16.dp) // Add padding below the image
+            )
+        } else {
+            Text(
+                text = "No image selected",
+                modifier = Modifier
+                    .weight(1f) // Take available vertical space
+                    .fillMaxWidth() // Fill width
+                    .padding(bottom = 16.dp) // Add padding below the text
+            )
+        }
+
+        // Bottom section: Action buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround // Distribute buttons horizontally
+        ) {
             Button(onClick = {
                 selectedImageUri?.let { uri ->
                     val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
@@ -87,30 +121,9 @@ fun ImageEditorScreen() {
                 editedBitmap?.let { bitmap ->
                     saveImageToGallery(context, bitmap, "edited_image_${System.currentTimeMillis()}")
                 }
-            }, modifier = Modifier.padding(start = 8.dp)) {
+            }) {
                 Text("Save Image")
             }
-        }
-
-        val imageToDisplay = editedBitmap ?: selectedImageUri
-
-        if (imageToDisplay != null) {
-            AsyncImage(
-                model = imageToDisplay,
-                contentDescription = "Selected Image",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .padding(top = 16.dp)
-            )
-        } else {
-            Text(
-                text = "No image selected",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .padding(top = 16.dp)
-            )
         }
     }
 }
