@@ -19,19 +19,29 @@ jobs:
           java-version: '17'
 
       - name: Download and Extract Gradle Wrapper JAR
-        # This step downloads the full Gradle distribution, extracts the gradle-wrapper.jar,
-        # and places it in the correct directory.
         run: |
           GRADLE_DIST_URL="https://services.gradle.org/distributions/gradle-9.0.0-bin.zip"
           GRADLE_VERSION="9.0.0"
           WRAPPER_DIR="gradle/wrapper"
-          WRAPPER_JAR_NAME="gradle-wrapper.jar" # Corrected: removed version from name
+          TEMP_UNZIP_DIR="gradle_dist_temp"
           
           mkdir -p "$WRAPPER_DIR"
+          mkdir -p "$TEMP_UNZIP_DIR"
+          
           curl -L "$GRADLE_DIST_URL" -o gradle-distribution.zip
-          unzip -j gradle-distribution.zip "gradle/wrapper/${WRAPPER_JAR_NAME}" -d "$WRAPPER_DIR" # Corrected path
-          mv "$WRAPPER_DIR/${WRAPPER_JAR_NAME}" "$WRAPPER_DIR/gradle-wrapper.jar"
-          rm gradle-distribution.zip
+          unzip gradle-distribution.zip -d "$TEMP_UNZIP_DIR"
+          
+          # Try common locations for gradle-wrapper.jar within the unzipped distribution
+          if [ -f "${TEMP_UNZIP_DIR}/gradle-${GRADLE_VERSION}/lib/gradle-wrapper.jar" ]; then
+            cp "${TEMP_UNZIP_DIR}/gradle-${GRADLE_VERSION}/lib/gradle-wrapper.jar" "$WRAPPER_DIR/gradle-wrapper.jar"
+          elif [ -f "${TEMP_UNZIP_DIR}/gradle-${GRADLE_VERSION}/gradle/wrapper/gradle-wrapper.jar" ]; then
+            cp "${TEMP_UNZIP_DIR}/gradle-${GRADLE_VERSION}/gradle/wrapper/gradle-wrapper.jar" "$WRAPPER_DIR/gradle-wrapper.jar"
+          else
+            echo "Error: gradle-wrapper.jar not found in expected locations within the distribution."
+            exit 1
+          fi
+          
+          rm -rf gradle-distribution.zip "$TEMP_UNZIP_DIR"
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
