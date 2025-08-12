@@ -1,0 +1,51 @@
+name: Android Debug Build and Upload
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers the workflow on pushes to tags starting with 'v', e.g., v1.0.0
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java Development Kit
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        # This step builds the debug APK.
+        run: |
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Create GitHub Release
+        # This step creates a new GitHub Release using the pushed tag.
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is automatically provided by GitHub Actions
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Debug APK
+        # This step uploads the generated debug APK to the newly created GitHub Release.
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/debug/app-debug.apk # Path for debug APK
+          asset_name: app-debug-${{ github.ref_name }}.apk # Naming the asset with the tag name
+          asset_content_type: application/vnd.android.package-archive
