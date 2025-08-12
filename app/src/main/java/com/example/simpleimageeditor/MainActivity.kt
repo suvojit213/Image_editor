@@ -11,6 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.composable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.Composable
@@ -56,17 +59,18 @@ class MainActivity : ComponentActivity() {
             SimpleImageEditorTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
+                val navController = rememberNavController()
 
                 Scaffold(
                     snackbarHost = { SnackbarHost(snackbarHostState) }
-                ) { paddingValues ->
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        ImageEditorScreen(snackbarHostState = snackbarHostState, coroutineScope = scope)
+                ) { paddingValues -> // Keep paddingValues for Scaffold content
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") {
+                            HomeScreen(navController = navController)
+                        }
+                        composable("image_editor") {
+                            ImageEditorScreen(snackbarHostState = snackbarHostState, coroutineScope = scope)
+                        }
                     }
                 }
             }
