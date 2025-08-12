@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +40,10 @@ import coil3.compose.AsyncImage
 import java.io.OutputStream
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Offset
 
 
 
@@ -44,11 +52,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SimpleImageEditorTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    ImageEditorScreen()
+                val snackbarHostState = remember { SnackbarHostState() }
+                val scope = rememberCoroutineScope()
+
+                Scaffold(
+                    snackbarHost = { SnackbarHost(snackbarHostState) }
+                ) { paddingValues ->
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        ImageEditorScreen(snackbarHostState = snackbarHostState, coroutineScope = scope)
+                    }
                 }
             }
         }
@@ -56,16 +73,25 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ImageEditorScreen() {
+fun ImageEditorScreen(snackbarHostState: SnackbarHostState, coroutineScope: CoroutineScope) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var editedBitmap by remember { mutableStateOf<Bitmap?>(null) }
     val context = LocalContext.current
 
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) {
-        selectedImageUri = it
+    ) { uri: Uri? ->
+        selectedImageUri = uri
         editedBitmap = null // Reset edited bitmap when a new image is picked
+        if (uri != null) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Image selected!")
+            }
+        } else {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("No image selected.")
+            }
+        }
     }
 
     Column(
@@ -87,6 +113,9 @@ fun ImageEditorScreen() {
         val imageToDisplay = editedBitmap ?: selectedImageUri
 
         if (imageToDisplay != null) {
+            var scale by remember { mutableStateOf(1f) }
+            var offset by remember { mutableStateOf(Offset.Zero) }
+
             AsyncImage(
                 model = imageToDisplay,
                 contentDescription = "Selected Image",
@@ -94,6 +123,18 @@ fun ImageEditorScreen() {
                     .weight(1f) // Take available vertical space
                     .fillMaxWidth() // Fill width
                     .padding(bottom = 16.dp) // Add padding below the image
+                    .pointerInput(Unit) {
+                        detectTransformGestures { centroid, pan, zoom, rotation ->
+                            scale *= zoom
+                            offset += pan
+                        }
+                    }
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offset.x,
+                        translationY = offset.y
+                    )
             )
         } else {
             Text(
@@ -111,16 +152,32 @@ fun ImageEditorScreen() {
             horizontalArrangement = Arrangement.SpaceAround // Distribute buttons horizontally
         ) {
             Button(onClick = {
+                coroutineScope.launch { snackbarHostState.showSnackbar("Applying filter...") }
                 selectedImageUri?.let { uri ->
-                    val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-                    editedBitmap = toGrayscale(bitmap)
+                    try {
+                        val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+                        editedBitmap = toGrayscale(bitmap)
+                        coroutineScope.launch { snackbarHostState.showSnackbar("Filter applied!") }
+                    } catch (e: Exception) {
+                        coroutineScope.launch { snackbarHostState.showSnackbar("Failed to apply filter: ${e.localizedMessage}") }
+                    }
+                } ?: run {
+                    coroutineScope.launch { snackbarHostState.showSnackbar("Please select an image first.") }
                 }
             }) {
                 Text("Apply Grayscale Filter")
             }
             Button(onClick = {
+                coroutineScope.launch { snackbarHostState.showSnackbar("Saving image...") }
                 editedBitmap?.let { bitmap ->
-                    saveImageToGallery(context, bitmap, "edited_image_${System.currentTimeMillis()}")
+                    try {
+                        saveImageToGallery(context, bitmap, "edited_image_${System.currentTimeMillis()}")
+                        coroutineScope.launch { snackbarHostState.showSnackbar("Image saved successfully!") }
+                    } catch (e: Exception) {
+                        coroutineScope.launch { snackbarHostState.showSnackbar("Failed to save image: ${e.localizedMessage}") }
+                    }
+                } ?: run {
+                    coroutineScope.launch { snackbarHostState.showSnackbar("No image to save.") }
                 }
             }) {
                 Text("Save Image")
