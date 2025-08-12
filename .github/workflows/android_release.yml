@@ -55,7 +55,7 @@ jobs:
     - name: Determine APK Path
       id: apk_path
       run: |
-        RELEASE_APK="app/build/outputs/apk/release/app-release.apk"
+        RELEASE_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
         DEBUG_APK="app/build/outputs/apk/debug/app-debug.apk"
         
         if [ -f "$RELEASE_APK" ]; then
