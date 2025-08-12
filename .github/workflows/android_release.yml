@@ -29,7 +29,7 @@ jobs:
           
           mkdir -p "$WRAPPER_DIR"
           curl -L "$GRADLE_DIST_URL" -o gradle-distribution.zip
-          unzip -j gradle-distribution.zip "gradle-${GRADLE_VERSION}/lib/${WRAPPER_JAR_NAME}" -d "$WRAPPER_DIR"
+          unzip -j gradle-distribution.zip "gradle/wrapper/${WRAPPER_JAR_NAME}" -d "$WRAPPER_DIR" # Corrected path
           mv "$WRAPPER_DIR/${WRAPPER_JAR_NAME}" "$WRAPPER_DIR/gradle-wrapper.jar"
           rm gradle-distribution.zip
 
