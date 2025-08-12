@@ -11,6 +11,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -227,7 +229,9 @@ fun saveImageToGallery(context: android.content.Context, bitmap: Bitmap, title: 
 @Composable
 fun PreviewImageEditorScreen() {
     SimpleImageEditorTheme {
-        ImageEditorScreen()
+        val snackbarHostState = remember { SnackbarHostState() }
+        val scope = rememberCoroutineScope()
+        ImageEditorScreen(snackbarHostState = snackbarHostState, coroutineScope = scope)
     }
 }
 
