@@ -20,7 +20,7 @@ import com.example.simpleimageeditor.ui.theme.*
 @Composable
 fun HomeScreen(navController: NavController) {
     Scaffold(
-        containerColor = DarkBackground, // Set dark background for Scaffold
+        containerColor = MaterialTheme.colorScheme.background, // Set dark background for Scaffold
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("image_editor") },
@@ -46,7 +46,7 @@ fun HomeScreen(navController: NavController) {
                     Icon(
                         Icons.Filled.Add,
                         "Create new image",
-                        tint = Color.White, // White icon for contrast
+                        tint = MaterialTheme.colorScheme.onPrimary, // White icon for contrast
                         modifier = Modifier.size(40.dp) // Larger icon
                     )
                 }
@@ -54,7 +54,7 @@ fun HomeScreen(navController: NavController) {
         },
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
-            BottomAppBar(containerColor = DarkBackground) { // Dark background for BottomAppBar
+            BottomAppBar(containerColor = MaterialTheme.colorScheme.surface) { // Dark background for BottomAppBar
                 // Optional: Add navigation items here later
             }
         }
@@ -70,20 +70,20 @@ fun HomeScreen(navController: NavController) {
             Text(
                 text = "Welcome to Image Editor",
                 style = MaterialTheme.typography.headlineMedium.copy(
-                    color = LightText, // Light text for contrast
+                    color = MaterialTheme.colorScheme.onBackground, // Light text for contrast
                     fontWeight = FontWeight.Bold
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
             Text(
                 text = "Tap the '+' button to start editing!",
-                style = MaterialTheme.typography.bodyLarge.copy(color = LightText) // Light text
+                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground) // Light text
             )
             // Placeholder for recent images
             Spacer(modifier = Modifier.height(64.dp))
             Text(
                 text = "Recent Images (Coming Soon)",
-                style = MaterialTheme.typography.bodySmall.copy(color = LightText.copy(alpha = 0.7f)) // Slightly faded light text
+                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)) // Slightly faded light text
             )
         }
     }

@@ -24,29 +24,29 @@ val ColorScheme.isLight: Boolean
     get() = primary.luminance() > 0.5f // A simple heuristic, adjust as needed
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    secondary = SecondaryDark,
-    tertiary = SecondaryDark, // Using secondary for tertiary as well for simplicity
-    background = BackgroundDark,
-    surface = SurfaceDark,
-    onPrimary = TextLight,
-    onSecondary = TextLight,
-    onTertiary = TextLight,
-    onBackground = TextLight,
-    onSurface = TextLight
+    primary = PrimaryMinimal,
+    secondary = SecondaryMinimal,
+    tertiary = SecondaryMinimal,
+    background = BackgroundDarkMinimal,
+    surface = SurfaceDarkMinimal,
+    onPrimary = TextLightMinimal,
+    onSecondary = TextLightMinimal,
+    onTertiary = TextLightMinimal,
+    onBackground = TextLightMinimal,
+    onSurface = TextLightMinimal
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    secondary = SecondaryLight,
-    tertiary = SecondaryLight, // Using secondary for tertiary as well for simplicity
+    primary = PrimaryMinimalLight,
+    secondary = SecondaryMinimalLight,
+    tertiary = SecondaryMinimalLight,
     background = Color(0xFFFFFFFF), // White background for light theme
     surface = Color(0xFFF5F5F5), // Light gray surface for light theme
-    onPrimary = TextDark,
-    onSecondary = TextDark,
-    onTertiary = TextDark,
-    onBackground = TextDark,
-    onSurface = TextDark
+    onPrimary = TextDarkMinimal,
+    onSecondary = TextDarkMinimal,
+    onTertiary = TextDarkMinimal,
+    onBackground = TextDarkMinimal,
+    onSurface = TextDarkMinimal
 )
 
 @Composable

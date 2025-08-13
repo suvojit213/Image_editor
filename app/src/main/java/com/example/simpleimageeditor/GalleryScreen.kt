@@ -73,11 +73,11 @@ fun GalleryScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Your Photos", color = LightText) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
+                title = { Text("Your Photos", color = MaterialTheme.colorScheme.onBackground) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
-        containerColor = DarkBackground, // Set dark background for Scaffold
+        containerColor = MaterialTheme.colorScheme.background, // Set dark background for Scaffold
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier
@@ -113,7 +113,7 @@ fun GalleryScreen(navController: NavController) {
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No images found or permission denied.", color = LightText)
+                Text("No images found or permission denied.", color = MaterialTheme.colorScheme.onBackground)
             }
         } else {
             LazyVerticalGrid(

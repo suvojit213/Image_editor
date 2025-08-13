@@ -35,10 +35,10 @@ fun ImageDetailScreen(navController: NavController, imageUri: String?) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Image Detail", color = LightText) },
+                title = { Text("Image Detail", color = MaterialTheme.colorScheme.onBackground) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, "Back", tint = LightText)
+                        Icon(Icons.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onBackground)
                     }
                 },
                 actions = {
@@ -47,13 +47,13 @@ fun ImageDetailScreen(navController: NavController, imageUri: String?) {
                             navController.navigate("image_editor/${Uri.encode(it.toString())}")
                         }
                     }) {
-                        Icon(Icons.Filled.Edit, "Edit", tint = LightText)
+                        Icon(Icons.Filled.Edit, "Edit", tint = MaterialTheme.colorScheme.onBackground)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
-        containerColor = DarkBackground // Set dark background for Scaffold
+        containerColor = MaterialTheme.colorScheme.background // Set dark background for Scaffold
     ) { paddingValues ->
         if (uri != null) {
             var scale by remember { mutableStateOf(1f) }
@@ -87,7 +87,7 @@ fun ImageDetailScreen(navController: NavController, imageUri: String?) {
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Image not found.", color = LightText)
+                Text("Image not found.", color = MaterialTheme.colorScheme.onBackground)
             }
         }
     }
