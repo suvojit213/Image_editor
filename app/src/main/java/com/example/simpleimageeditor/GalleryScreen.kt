@@ -44,6 +44,9 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.SubcomposeAsyncImageContent
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.foundation.background
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -167,8 +170,6 @@ fun GalleryScreen(navController: NavController) {
         }
     }
 }
-
-import kotlinx.coroutines.launch // Add this import
 
 private fun loadImages(context: android.content.Context, images: SnapshotStateList<Uri>, scope: CoroutineScope) { // Added scope parameter
     images.clear()

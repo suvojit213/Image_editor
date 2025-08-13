@@ -1,5 +1,7 @@
 package com.example.simpleimageeditor
 
+import android.net.Uri
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.OutlinedTextField
@@ -22,8 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList // Added this import
-import androidx.compose.runtime.mutableStateListOf // Added this import
+import androidx.compose.runtime.toMutableStateList 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -43,7 +46,7 @@ fun SearchScreen(navController: NavController) {
     val allRecognizedTexts = ImageTextRecognizer.getAllRecognizedTexts()
     val searchResults = remember(searchQuery) {
         if (searchQuery.isBlank()) {
-            mutableStateListOf<Uri>() // Show empty results if search query is blank
+            mutableStateListOf<Uri>()
         } else {
             allRecognizedTexts.filter { (uri, text) ->
                 text.contains(searchQuery, ignoreCase = true)
