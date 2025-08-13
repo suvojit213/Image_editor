@@ -55,7 +55,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.2")
     implementation("androidx.activity:activity-compose:1.10.1")
-    implementation(platform("androidx.compose:compose-bom:2025.07.01")) // Updated version
+    implementation(platform("androidx.compose:compose-bom:2025.07.00")) // Corrected version
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -85,5 +85,5 @@ dependencies {
 
     // ML Kit Text Recognition
     implementation("com.google.mlkit:text-recognition:16.0.0")
-    implementation("com.google.mlkit:text-recognition-latin:16.0.0")
+    implementation("com.google.mlkit:text-recognition-latin:16.0.1") // Corrected version
 }
