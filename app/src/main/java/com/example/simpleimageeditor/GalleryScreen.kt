@@ -39,6 +39,11 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.ui.draw.clip
 import androidx.compose.material3.Icon
+import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.compose.SubcomposeAsyncImageContent
+import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.foundation.background
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,17 +126,37 @@ fun GalleryScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(images, key = { uri -> uri.toString() }) { uri ->
-                    Image(
-                        painter = rememberAsyncImagePainter(uri),
+                    SubcomposeAsyncImage(
+                        model = uri,
                         contentDescription = null,
                         modifier = Modifier
                             .aspectRatio(1f)
                             .clickable {
                                 // Navigate to ImageDetailScreen
                                 navController.navigate("image_detail/${Uri.encode(uri.toString())}")
-                            },
+                            }
+                            .clip(RoundedCornerShape(8.dp)), // Added rounded corners to images
                         contentScale = ContentScale.Crop
-                    )
+                    ) {
+                        val state = painter.state
+                        if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.BrokenImage, // Or a placeholder icon
+                                    contentDescription = "Loading/Error",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        } else {
+                            SubcomposeAsyncImageContent()
+                        }
+                    }
                 }
             }
         }
