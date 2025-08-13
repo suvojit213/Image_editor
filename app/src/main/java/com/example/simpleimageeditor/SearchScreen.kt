@@ -43,7 +43,7 @@ import androidx.compose.foundation.layout.aspectRatio
 @Composable
 fun SearchScreen(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
-    val allRecognizedTexts = ImageTextRecognizer.getAllRecognizedTexts()
+    val allRecognizedTexts = emptyMap<Uri, String>()
     val searchResults = remember(searchQuery) {
         if (searchQuery.isBlank()) {
             mutableStateListOf<Uri>()

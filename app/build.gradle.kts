@@ -83,7 +83,5 @@ dependencies {
     // Accompanist System UI Controller
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0") // Updated version
 
-    // ML Kit Text Recognition
-    implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    
 }

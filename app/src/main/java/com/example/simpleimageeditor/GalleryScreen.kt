@@ -179,7 +179,7 @@ fun GalleryScreen(navController: NavController) {
 
 private fun loadMedia(context: android.content.Context, media: SnapshotStateList<Uri>, scope: CoroutineScope) {
     media.clear()
-    ImageTextRecognizer.clearRecognizedTexts() // Clear previous recognized texts
+    
 
     scope.launch(Dispatchers.IO) { // Launch a new coroutine on IO dispatcher
         val collectionImages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -221,7 +221,7 @@ private fun loadMedia(context: android.content.Context, media: SnapshotStateList
                     id
                 )
                 mediaList.add(Pair(contentUri, dateAdded))
-                ImageTextRecognizer.recognizeTextFromImage(context, contentUri) // Uncommented
+                
             }
         }
 
