@@ -218,9 +218,9 @@ private fun loadMedia(context: android.content.Context, media: SnapshotStateList
                 id
             )
             mediaList.add(Pair(contentUri, dateAdded))
-            scope.launch {
+            /*scope.launch {
                 ImageTextRecognizer.recognizeTextFromImage(context, contentUri)
-            }
+            }*/
         }
     }
 
