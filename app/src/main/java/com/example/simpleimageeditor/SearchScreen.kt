@@ -77,7 +77,7 @@ fun SearchScreen(navController: NavController) {
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                label = { Text("Search text in images") },
+                label = { Text("Search") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
