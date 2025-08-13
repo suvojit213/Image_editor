@@ -120,7 +120,7 @@ fun GalleryScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                items(images) { uri ->
+                items(images, key = { uri -> uri.toString() }) { uri ->
                     Image(
                         painter = rememberAsyncImagePainter(uri),
                         contentDescription = null,
