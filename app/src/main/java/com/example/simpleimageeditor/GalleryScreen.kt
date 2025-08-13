@@ -52,27 +52,31 @@ import kotlinx.coroutines.launch
 @Composable
 fun GalleryScreen(navController: NavController) {
     val context = LocalContext.current
-    val images = remember { mutableStateListOf<Uri>() }
+    val media = remember { mutableStateListOf<Uri>() }
 
-    val scope = rememberCoroutineScope() // Add this line
+    val scope = rememberCoroutineScope()
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val isGranted = permissions.values.all { it }
         if (isGranted) {
-            loadImages(context, images, scope) // Pass scope here
+            loadMedia(context, media, scope)
         } else {
             // Handle permission denied
         }
     }
 
     LaunchedEffect(Unit) {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO
+            )
         } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
-        permissionLauncher.launch(permission)
+        permissionLauncher.launch(permissions)
     }
 
     Scaffold(
@@ -114,7 +118,7 @@ fun GalleryScreen(navController: NavController) {
             }
         }
     ) { paddingValues ->
-        if (images.isEmpty()) {
+        if (media.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -133,7 +137,7 @@ fun GalleryScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                items(images, key = { uri -> uri.toString() }) { uri ->
+                items(media, key = { uri -> uri.toString() }) { uri ->
                     SubcomposeAsyncImage(
                         model = uri,
                         contentDescription = null,
@@ -171,46 +175,77 @@ fun GalleryScreen(navController: NavController) {
     }
 }
 
-private fun loadImages(context: android.content.Context, images: SnapshotStateList<Uri>, scope: CoroutineScope) { // Added scope parameter
-    images.clear()
+private fun loadMedia(context: android.content.Context, media: SnapshotStateList<Uri>, scope: CoroutineScope) {
+    media.clear()
     ImageTextRecognizer.clearRecognizedTexts() // Clear previous recognized texts
 
-    val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        MediaStore.Images.Media.getContentUri(
-            MediaStore.VOLUME_EXTERNAL
-        )
+    val collectionImages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
     } else {
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     }
 
+    val collectionVideos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+    } else {
+        MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+    }
+
     val projection = arrayOf(
-        MediaStore.Images.Media._ID,
-        MediaStore.Images.Media.DISPLAY_NAME,
-        MediaStore.Images.Media.SIZE
+        MediaStore.MediaColumns._ID,
+        MediaStore.MediaColumns.DATE_ADDED
     )
 
-    val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+    val sortOrder = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
+    val mediaList = mutableListOf<Pair<Uri, Long>>()
+
+    // Query images
     context.contentResolver.query(
-        collection,
+        collectionImages,
         projection,
         null,
         null,
         sortOrder
     )?.use { cursor ->
-        val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+        val idColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
+        val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
         while (cursor.moveToNext()) {
             val id = cursor.getLong(idColumn)
+            val dateAdded = cursor.getLong(dateAddedColumn)
             val contentUri: Uri = ContentUris.withAppendedId(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                collectionImages,
                 id
             )
-            images.add(contentUri)
-
-            // Trigger text recognition in a coroutine
+            mediaList.add(Pair(contentUri, dateAdded))
             scope.launch {
                 ImageTextRecognizer.recognizeTextFromImage(context, contentUri)
             }
         }
     }
+
+    // Query videos
+    context.contentResolver.query(
+        collectionVideos,
+        projection,
+        null,
+        null,
+        sortOrder
+    )?.use { cursor ->
+        val idColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
+        val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
+        while (cursor.moveToNext()) {
+            val id = cursor.getLong(idColumn)
+            val dateAdded = cursor.getLong(dateAddedColumn)
+            val contentUri: Uri = ContentUris.withAppendedId(
+                collectionVideos,
+                id
+            )
+            mediaList.add(Pair(contentUri, dateAdded))
+        }
+    }
+
+    // Sort and add to the list
+    mediaList.sortByDescending { it.second }
+    media.addAll(mediaList.map { it.first })
 }
