@@ -2,17 +2,26 @@ package com.example.simpleimageeditor.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Primary Colors
+val PrimaryDark = Color(0xFF2196F3) // A vibrant blue
+val PrimaryLight = Color(0xFF64B5F6) // A lighter shade of the primary blue
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Secondary Colors
+val SecondaryDark = Color(0xFF00BCD4) // A teal/cyan for accents
+val SecondaryLight = Color(0xFF4DD0E1) // A lighter shade of the secondary
 
-val VibrantBlue = Color(0xFF4285F4)
-val VibrantGreen = Color(0xFF34A853)
-val VibrantYellow = Color(0xFFFBBC05)
-val VibrantRed = Color(0xFFEA4335)
-val DarkBackground = Color(0xFF1A1A2E)
-val LightText = Color(0xFFE0E0E0)
+// Backgrounds
+val BackgroundDark = Color(0xFF121212) // Very dark for true black theme
+val SurfaceDark = Color(0xFF1E1E1E) // Slightly lighter than background for cards/surfaces
+
+// Text Colors
+val TextLight = Color(0xFFFFFFFF) // White text on dark backgrounds
+val TextDark = Color(0xFF000000) // Black text on light backgrounds
+
+// Other useful colors
+val ErrorRed = Color(0xFFB00020)
+val SuccessGreen = Color(0xFF4CAF50)
+
+// Keeping original DarkBackground and LightText for now, but will update their usage in Theme.kt
+val DarkBackground = BackgroundDark
+val LightText = TextLight

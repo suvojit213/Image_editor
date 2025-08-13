@@ -14,6 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import coil3.compose.rememberAsyncImagePainter
 import com.example.simpleimageeditor.ui.theme.DarkBackground
@@ -48,13 +54,28 @@ fun ImageDetailScreen(navController: NavController, imageUri: String?) {
         containerColor = DarkBackground // Set dark background for Scaffold
     ) { paddingValues ->
         if (uri != null) {
+            var scale by remember { mutableStateOf(1f) }
+            var offset by remember { mutableStateOf(Offset.Zero) }
+
             Image(
                 painter = rememberAsyncImagePainter(uri),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .background(Color.Black), // Black background for image viewer
+                    .background(Color.Black) // Black background for image viewer
+                    .pointerInput(Unit) {
+                        detectTransformGestures { centroid, pan, zoom, rotation ->
+                            scale *= zoom
+                            offset += pan
+                        }
+                    }
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offset.x,
+                        translationY = offset.y
+                    ),
                 contentScale = ContentScale.Fit
             )
         } else {

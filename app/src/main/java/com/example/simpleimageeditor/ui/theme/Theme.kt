@@ -16,25 +16,29 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = PrimaryDark,
+    secondary = SecondaryDark,
+    tertiary = SecondaryDark, // Using secondary for tertiary as well for simplicity
+    background = BackgroundDark,
+    surface = SurfaceDark,
+    onPrimary = TextLight,
+    onSecondary = TextLight,
+    onTertiary = TextLight,
+    onBackground = TextLight,
+    onSurface = TextLight
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = PrimaryLight,
+    secondary = SecondaryLight,
+    tertiary = SecondaryLight, // Using secondary for tertiary as well for simplicity
+    background = Color(0xFFFFFFFF), // White background for light theme
+    surface = Color(0xFFF5F5F5), // Light gray surface for light theme
+    onPrimary = TextDark,
+    onSecondary = TextDark,
+    onTertiary = TextDark,
+    onBackground = TextDark,
+    onSurface = TextDark
 )
 
 @Composable
@@ -55,11 +59,7 @@ fun SimpleImageEditorTheme(
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
+        // Removed SideEffect for status bar color as it's handled by SystemUiController in MainActivity
     }
 
     MaterialTheme(
