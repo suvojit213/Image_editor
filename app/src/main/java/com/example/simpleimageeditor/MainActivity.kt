@@ -54,9 +54,12 @@ import androidx.compose.ui.geometry.Offset
 
 
 
+import androidx.core.view.WindowCompat
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false) // This line makes the status bar transparent
         setContent {
             SimpleImageEditorTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
@@ -64,6 +67,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 Scaffold(
+                    modifier = Modifier.systemBarsPadding(), // Apply systemBarsPadding to Scaffold
                     snackbarHost = { SnackbarHost(snackbarHostState) }
                 ) { paddingValues -> // Keep paddingValues for Scaffold content
                     NavHost(navController = navController, startDestination = "gallery") {
