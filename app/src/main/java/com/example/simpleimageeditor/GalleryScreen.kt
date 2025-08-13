@@ -51,11 +51,13 @@ fun GalleryScreen(navController: NavController) {
     val context = LocalContext.current
     val images = remember { mutableStateListOf<Uri>() }
 
+    val scope = rememberCoroutineScope() // Add this line
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            loadImages(context, images)
+            loadImages(context, images, scope) // Pass scope here
         } else {
             // Handle permission denied
         }
@@ -98,7 +100,10 @@ fun GalleryScreen(navController: NavController) {
                         Icon(Icons.Filled.Collections, "Collections", tint = MaterialTheme.colorScheme.onSurface)
                         Text("Collections", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelSmall)
                     }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable { navController.navigate("search_screen") }
+                    ) {
                         Icon(Icons.Filled.Search, "Search", tint = MaterialTheme.colorScheme.onSurface)
                         Text("Search", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelSmall)
                     }
@@ -163,8 +168,12 @@ fun GalleryScreen(navController: NavController) {
     }
 }
 
-private fun loadImages(context: android.content.Context, images: SnapshotStateList<Uri>) {
+import kotlinx.coroutines.launch // Add this import
+
+private fun loadImages(context: android.content.Context, images: SnapshotStateList<Uri>, scope: CoroutineScope) { // Added scope parameter
     images.clear()
+    ImageTextRecognizer.clearRecognizedTexts() // Clear previous recognized texts
+
     val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         MediaStore.Images.Media.getContentUri(
             MediaStore.VOLUME_EXTERNAL
@@ -196,6 +205,11 @@ private fun loadImages(context: android.content.Context, images: SnapshotStateLi
                 id
             )
             images.add(contentUri)
+
+            // Trigger text recognition in a coroutine
+            scope.launch {
+                ImageTextRecognizer.recognizeTextFromImage(context, contentUri)
+            }
         }
     }
 }

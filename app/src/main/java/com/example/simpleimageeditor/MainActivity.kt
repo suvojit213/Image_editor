@@ -105,6 +105,9 @@ class MainActivity : ComponentActivity() {
                         composable("image_editor") { // For picking image from editor directly
                             ImageEditorScreen(snackbarHostState = snackbarHostState, coroutineScope = scope)
                         }
+                        composable("search_screen") {
+                            SearchScreen(navController = navController)
+                        }
                     }
                 }
             }
