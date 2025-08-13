@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.simpleimageeditor.ui.theme.SimpleImageEditorTheme
+import com.example.simpleimageeditor.ui.theme.isLight // Added this import
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
