@@ -32,7 +32,12 @@ fun HomeScreen(navController: NavController) {
                         .fillMaxSize()
                         .background(
                             brush = Brush.linearGradient(
-                                colors = listOf(VibrantBlue, VibrantGreen, VibrantYellow, VibrantRed)
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary,
+                                    MaterialTheme.colorScheme.tertiary,
+                                    MaterialTheme.colorScheme.primary // Repeat primary for a smoother transition
+                                )
                             ),
                             shape = CircleShape
                         ),

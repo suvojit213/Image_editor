@@ -10,10 +10,18 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color // Added this import
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.compose.material3.ColorScheme // Added this import
+
+// Extension property to check if the ColorScheme is light
+import androidx.compose.ui.graphics.luminance // Added this import
+
+val ColorScheme.isLight: Boolean
+    get() = primary.luminance() > 0.5f // A simple heuristic, adjust as needed
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDark,
