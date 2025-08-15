@@ -24,8 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import coil3.compose.rememberAsyncImagePainter
-import com.example.simpleimageeditor.ui.theme.DarkBackground
-import com.example.simpleimageeditor.ui.theme.LightText
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
