@@ -12,8 +12,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.LaunchedEffect
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import androidx.compose.runtime.SideEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
@@ -23,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.simpleimageeditor.ui.theme.SimpleImageEditorTheme
-import com.example.simpleimageeditor.ui.theme.isLight // Added this import
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -55,28 +52,12 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.ui.graphics.Color // Added this import
-
-
-
-import androidx.core.view.WindowCompat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false) // This line makes the status bar transparent
         setContent {
             SimpleImageEditorTheme {
-                val systemUiController = rememberSystemUiController()
-                val useDarkIcons = MaterialTheme.colorScheme.isLight // Assuming isLight is a property of your color scheme
-
-                SideEffect {
-                    systemUiController.setStatusBarColor(
-                        color = Color.Transparent,
-                        darkIcons = useDarkIcons
-                    )
-                }
-
                 val snackbarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
                 val navController = rememberNavController()
